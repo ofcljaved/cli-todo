@@ -85,6 +85,15 @@ struct Todo {
     tasks: Vec<Task>,
 }
 
+fn display_task_header() {
+    println!("| Id  | Status (completed)  | Description  ");
+}
+
+fn display_format(id: usize, completed: bool, desc: &str) {
+    let status = if completed { "[X]" } else { "[]" };
+    println!("| {}  | {}  | {}", id, status, desc);
+}
+
 impl Todo {
     fn new() -> Self {
         Todo { tasks: Vec::new() }
@@ -93,18 +102,31 @@ impl Todo {
     fn add_task(&mut self, description: &str) {
         let task = Task::new(description);
         self.tasks.push(task);
+        let last_task_added = self.tasks.last().unwrap();
+        display_task_header();
+        display_format(
+            self.tasks.len(),
+            last_task_added.completed,
+            &last_task_added.description,
+        );
     }
 
     fn update_task(&mut self, index: usize) {
         if let Some(task) = self.tasks.get_mut(index) {
             task.completed = !task.completed;
+            display_task_header();
+            display_format(
+                index  + 1,
+                task.completed,
+                &task.description,
+            );
         }
     }
 
     fn display_task(&mut self) {
+        display_task_header();
         for (index, task) in self.tasks.iter().enumerate() {
-            let status = if task.completed { "[X]" } else { "[]" };
-            println!("{} {} : {}", index + 1, task.description, status);
+            display_format(index + 1, task.completed, &task.description);
         }
     }
 }
