@@ -1,7 +1,9 @@
-use std::{io::{self, Write}, usize};
+use std::io::{self, Write};
 
 fn get_numeric_input(prompt: &str) -> Option<u8> {
-    println!("{}", prompt);
+    print!("=> ");
+    print!("{}", prompt);
+    print!(" : ");
     io::stdout().flush().ok();
     let mut input = String::new();
     io::stdin()
@@ -17,7 +19,9 @@ fn get_numeric_input(prompt: &str) -> Option<u8> {
 }
 
 fn get_string_input(prompt: &str) -> String {
-    println!("{}", prompt);
+    print!("=> ");
+    print!("{}", prompt);
+    print!(" : ");
     io::stdout().flush().ok();
     let mut input = String::new();
     io::stdin()
@@ -28,16 +32,18 @@ fn get_string_input(prompt: &str) -> String {
 
 fn main() {
     let mut todo_app = Todo::new();
-    println!("--------------------------------------");
-    println!("---------------TODO APP---------------");
-    println!("--------------------------------------");
+    println!("======================================");
+    println!("===============TODO APP===============");
+    println!("======================================");
     println!();
     loop {
-        println!("Menu Options");
-        println!("1. Add new Task");
-        println!("2. Toggle Task Completion");
-        println!("3. Show Task");
-        println!("4. Exit");
+        println!("-----------------------------");
+        println!("| Menu Options              |");
+        println!("| 1. Add new Task           |");
+        println!("| 2. Toggle Task Completion |");
+        println!("| 3. Show Task              |");
+        println!("| 4. Exit                   |");
+        println!("-----------------------------");
         let choice = match get_numeric_input("Enter your choice") {
             Some(value) => value,
             None => continue,
