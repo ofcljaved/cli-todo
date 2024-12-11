@@ -1,4 +1,8 @@
+mod todo;
+mod task;
 use std::io::{self, Write};
+
+use todo::Todo;
 
 fn get_input<T: std::str::FromStr>(prompt: &str) -> Result<T, String> {
     print!("=> {} : ", prompt);
@@ -62,60 +66,4 @@ fn main() {
         }
     }
 }
-struct Task {
-    description: String,
-    completed: bool,
-}
 
-impl Task {
-    fn new(description: &str) -> Self {
-        Task {
-            description: description.to_string(),
-            completed: false,
-        }
-    }
-
-    fn display(&self, id: usize) {
-        let status = if self.completed { "[X]" } else { "[]" };
-        println!("| {:<2}  | {:<18}  | {}", id, status, self.description);
-    }
-}
-
-struct Todo {
-    tasks: Vec<Task>,
-}
-
-fn display_task_header() {
-    println!("| Id  | Status (completed)  | Description  ");
-}
-
-impl Todo {
-    fn new() -> Self {
-        Todo { tasks: Vec::new() }
-    }
-
-    fn add_task(&mut self, description: &str) {
-        let task = Task::new(description);
-        self.tasks.push(task);
-        let last_task_added = self.tasks.last().unwrap();
-        display_task_header();
-        last_task_added.display(self.tasks.len());
-    }
-
-    fn update_task(&mut self, index: usize) {
-        if let Some(task) = self.tasks.get_mut(index) {
-            task.completed = !task.completed;
-            display_task_header();
-            task.display(index + 1);
-        } else {
-            println!("Inavlid task index");
-        }
-    }
-
-    fn display_task(&mut self) {
-        display_task_header();
-        for (index, task) in self.tasks.iter().enumerate() {
-            task.display(index + 1);
-        }
-    }
-}
