@@ -9,8 +9,8 @@ impl Todo {
         Todo { tasks: Vec::new() }
     }
 
-    pub fn add_task(&mut self, description: &str) {
-        let task = Task::new(description);
+    pub fn add_task(&mut self, description: String) {
+        let task = Task::new(&description);
         self.tasks.push(task);
         let last_task_added = self.tasks.last().unwrap();
         display_task_header("Task Added");

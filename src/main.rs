@@ -17,12 +17,28 @@ fn get_input<T: std::str::FromStr>(prompt: &str) -> Result<T, String> {
         .map_err(|_| "Input Error: Invalid Input".to_string())
 }
 
-fn main() {
-    let mut todo_app = Todo::new();
-    println!("{:=^35}", "");
-    println!("{:=^35}", "TODO APP");
-    println!("{:=^35}", "");
-    loop {
+enum MenuOption {
+    AddTask,
+    ToggleCompletion,
+    ShowTasks,
+    DeleteTask,
+    Exit,
+    ClearScreen,
+}
+
+impl MenuOption {
+    fn from_u8(input: u8) -> Option<Self> {
+        match input {
+            1 => Some(Self::AddTask),
+            2 => Some(Self::ToggleCompletion),
+            3 => Some(Self::ShowTasks),
+            4 => Some(Self::DeleteTask),
+            5 => Some(Self::Exit),
+            6 => Some(Self::ClearScreen),
+            _ => None,
+        }
+    }
+    fn display_option() {
         println!();
         println!("{:-^35}", "");
         println!("| {:<32}|", "Menu Options");
@@ -31,49 +47,47 @@ fn main() {
         println!("| {:<32}|", "3. Show Task");
         println!("| {:<32}|", "4. Delete Task");
         println!("| {:<32}|", "5. Exit");
+        println!("| {:<32}|", "6. Clear Terminal");
         println!("{:-^35}", "");
-        let choice: u8 = match get_input("Enter your choice") {
-            Ok(value) => value,
-            Err(err) => {
-                println!("{}", err);
-                continue;
+    }
+}
+
+fn get_valid_input<T: std::str::FromStr>(prompt: &str) -> T {
+    loop {
+        match get_input::<T>(prompt) {
+            Ok(value) => return value,
+            Err(err) => println!("{}", err),
+        }
+    }
+}
+
+fn main() {
+    let mut todo_app = Todo::new();
+    print!("\x1Bc");
+    println!("{:=^35}", "");
+    println!("{:=^35}", "TODO APP");
+    println!("{:=^35}", "");
+    loop {
+        MenuOption::display_option();
+        let choice: u8 = get_valid_input("Enter your choice");
+        match MenuOption::from_u8(choice) {
+            Some(MenuOption::AddTask) => {
+                let description: String = get_valid_input("Enter Task description");
+                todo_app.add_task(description);
             }
-        };
-        match choice {
-            1 => {
-                let description: String = match get_input("Enter Task description") {
-                    Ok(desc) => desc,
-                    Err(err) => {
-                        println!("{}", err);
-                        continue;
-                    }
-                };
-                todo_app.add_task(&description);
-            }
-            2 => {
-                let index: usize = match get_input("Enter Task index to toggle it's completion") {
-                    Ok(value) => value,
-                    Err(err) => {
-                        println!("{}", err);
-                        continue;
-                    }
-                };
+            Some(MenuOption::ToggleCompletion) => {
+                let index: usize = get_valid_input("Enter Task index to toggle it's completion");
                 todo_app.update_task(index);
             }
 
-            3 => todo_app.display_task(),
-            4 => {
-                let index: usize = match get_input("Enter Task index to delete it") {
-                    Ok(value) => value,
-                    Err(err) => {
-                        println!("{}", err);
-                        continue;
-                    }
-                };
+            Some(MenuOption::ShowTasks) => todo_app.display_task(),
+            Some(MenuOption::DeleteTask) => {
+                let index: usize = get_valid_input("Enter Task index to delete it");
                 todo_app.delet_task(index);
             }
-            5 => break,
-            _ => println!("Invalid option!!!"),
+            Some(MenuOption::Exit) => break,
+            Some(MenuOption::ClearScreen) => print!("\x1Bc"),
+            None => println!("Invalid option!!!"),
         }
     }
 }
